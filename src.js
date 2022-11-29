@@ -17,16 +17,26 @@ let rightTimerId
 let leftTimerId
 let obstacleX = 0;
 let width = window.innerWidth;
+document.addEventListener('keyup', move); // event listener that listens for up
+let position = 0;
+const canvas = document.getElementById('canvas');
+let randomNum = 0;
+let isBone = false;
+let boneX = 0;
 
 
 function move(e) {
+    document.getElementById("instructions1").style.display = "none";
+    document.getElementById("instructions2").style.display = "none";
     if (e.keyCode === 38) { // when spacebar is pressed do makeAJump
         if (makeAJump === false) { // you can't jump twice, only once 
             let makeAJump = true; // invoke the jump
             jump()  // move corgi up and down 
             makeObstacles()
-            increment.innerHTML = ++score;
-            makeBoneAppear()
+           // increment.innerHTML = ++score;
+            if (isBone == false) {
+                makeBoneAppear()
+            }
         }
     } else if (e.keyCode === 39) {
         moveRight()
@@ -34,9 +44,6 @@ function move(e) {
         moveLeft();
     }
 }
-
-document.addEventListener('keydown', move); // event listener that listens for spacebar
-let position = 0;
 
 function jump() {
     let count = 0;
@@ -65,26 +72,26 @@ function jump() {
     }, 20);
 }
 
-const canvas = document.getElementById('canvas');
 
 function makeObstacles() {
-    let randomNum = Math.floor(Math.random() * 100) + 10000;
-    let obstacleX = 2500;
+    let randomNum = Math.random() * 100000
+    console.log(randomNum)
+    let obstacleX = width + 500;
     const obstacle = document.createElement('div');
     if (gameOver == false) obstacle.setAttribute('id', 'obstacle');
-    console.log(obstacle)
     canvas.appendChild(obstacle); // go into  canvas 
     obstacle.style.left = obstacleX + 'px';
 
     let timerId = setInterval(function () {
-        if (position < 60 && Math.round(left/10)*10 == Math.round(obstacleX/10)*10) { 
+        if (position < 60 && Math.round(left / 10) * 10 == Math.round(obstacleX / 10) * 10) {
             clearInterval(timerId);
-            message.innerHTML = "GAME OVER!"
+            message.innerHTML = "You are slower than a turtle.<br> Game Over! 🐢 "
             gameOver = true;
             if (canvas.firstChild) {
                 canvas.removeChild(canvas.lastChild);
             }
             document.getElementById("corgi").style.display = "none";
+            document.getElementById("obstacle").style.display = "none";
             document.getElementById("title").style.display = "none";
             document.getElementById("instructions1").style.display = "none";
             document.getElementById("start-over").style.display = "block";
@@ -92,7 +99,7 @@ function makeObstacles() {
         }
         obstacleX -= 2;
         obstacle.style.left = obstacleX + 'px';
-    }, 5)
+    }, 20)
 
     if (gameOver == false)
         setTimeout(makeObstacles, randomNum);
@@ -102,18 +109,40 @@ startOverButton.onclick = () => {
     location.reload();
 };
 
-// create a div that is for the bone 
+// create a div that is for the bone
+
 function makeBoneAppear() {
-    if (increment.innerHTML > 3) {
-        let randomNum = Math.floor(Math.random() * 100) + 10000;
-        let obstacleX = 800;
-        const treat = document.createElement('div');
-        if (gameOver == false) treat.setAttribute('id', 'treat');
-        console.log(treat)
+    let randomNum = Math.random() * 100000
+    let obstacleX = width + 500;
+    let max = 800;
+    let min = 200;
+    let boneLocation = (Math.floor(Math.random() * (max - min + 1)) + min)
+    const treat = document.createElement('div');
+    if (gameOver == false) treat.setAttribute('id', 'treat');
         canvas.appendChild(treat); // go into  canvas 
-        treat.style.left = obstacleX + 'px';
-    }
+        treat.style.left = boneLocation + 'px';
+        isBone = true;
+
+    let timerId = setInterval(function () {
+        if (position < 60 && Math.round(left / 10) * 10 == Math.round(boneLocation / 10) * 10) {
+            clearInterval(timerId);
+            increment.innerHTML = ++score;
+            isBone = false;
+            if (canvas.firstChild) {
+                canvas.removeChild(canvas.lastChild);
+            }
+            document.getElementById("treat").style.display = "none";
+        }
+        obstacleX -= 2;
+        obstacle.style.left = obstacleX + 'px';
+    }, 20)
+
+    if (isBone == false)
+    setTimeout(makeBoneAppear, randomNum);
 }
+
+
+
 
 function moveLeft() {
     if (goRight) {
@@ -122,10 +151,11 @@ function moveLeft() {
     }
     goLeft = true;
     leftTimerId = setInterval(function () {
-        left -= 5;
+        left -= 3;
         corgi.style.left = left + 'px';
         if (left < 0) {
             moveRight();
+            left = 0;
         }
     }, 20)
 }
@@ -137,13 +167,15 @@ function moveRight() {
     }
     goRight = true;
     rightTimerId = setInterval(function () {
-        left += 5;
+        left += 3;
         corgi.style.left = left + 'px';
         if (left > width) {
             moveLeft();
+            left = width;
         }
     }, 20)
 }
+
 
 
 
