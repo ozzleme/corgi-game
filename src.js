@@ -23,22 +23,27 @@ const canvas = document.getElementById('canvas');
 let randomNum = 0;
 let isBone = false;
 let boneX = 0;
+const myBackgroundAudio = document.createElement("audio");
+const dogBarkAudio = document.createElement("audio");
+const dogWhineAudio = document.createElement("audio");
+
 
 
 function move(e) {
     document.getElementById("instructions1").style.display = "none";
     document.getElementById("instructions2").style.display = "none";
-    if (e.keyCode === 38) { // when spacebar is pressed do makeAJump
+    if (e.keyCode === 38) { // when up arrow is pressed do makeAJump
         if (makeAJump === false) { // you can't jump twice, only once 
             let makeAJump = true; // invoke the jump
             jump()  // move corgi up and down 
             makeObstacles()
-           // increment.innerHTML = ++score;
             if (isBone == false) {
                 makeBoneAppear()
             }
+            myBackgroundAudio.src = "/music/forest-background.mp3";
+            myBackgroundAudio.play();
         }
-    } else if (e.keyCode === 39) {
+    } else if (e.keyCode === 39) { 
         moveRight()
     } else if (e.keyCode === 37) {
         moveLeft();
@@ -86,6 +91,10 @@ function makeObstacles() {
         if (position < 60 && Math.round(left / 10) * 10 == Math.round(obstacleX / 10) * 10) {
             clearInterval(timerId);
             message.innerHTML = "You are slower than a turtle.<br> Game Over! 🐢 "
+            document.getElementById("start-over").style.display = "block";
+            myBackgroundAudio.pause();
+            dogWhineAudio.src = "/music/whine.mp3"
+            dogWhineAudio.play()
             gameOver = true;
             if (canvas.firstChild) {
                 canvas.removeChild(canvas.lastChild);
@@ -94,7 +103,6 @@ function makeObstacles() {
             document.getElementById("obstacle").style.display = "none";
             document.getElementById("title").style.display = "none";
             document.getElementById("instructions1").style.display = "none";
-            document.getElementById("start-over").style.display = "block";
             document.getElementById("instructions2").style.display = "none";
         }
         obstacleX -= 2;
@@ -107,6 +115,7 @@ function makeObstacles() {
 
 startOverButton.onclick = () => {
     location.reload();
+    dogWhineAudio.pause();
 };
 
 // create a div that is for the bone
@@ -127,6 +136,8 @@ function makeBoneAppear() {
         if (position < 60 && Math.round(left / 10) * 10 == Math.round(boneLocation / 10) * 10) {
             clearInterval(timerId);
             increment.innerHTML = ++score;
+            dogBarkAudio.src="/music/single-bark.mp3";
+            dogBarkAudio.play();
             isBone = false;
             if (canvas.firstChild) {
                 canvas.removeChild(canvas.lastChild);
@@ -139,6 +150,7 @@ function makeBoneAppear() {
 
     if (isBone == false)
     setTimeout(makeBoneAppear, randomNum);
+    dogBarkAudio.pause();
 }
 
 
