@@ -25,8 +25,12 @@ let isBone = false;
 let boneX = 0;
 const myBackgroundAudio = document.createElement("audio");
 const dogBarkAudio = document.createElement("audio");
-const dogWhineAudio = document.createElement("audio");
+const body = document.getElementsByTagName("BODY")[0];
 
+body.onload = function() {
+    myBackgroundAudio.src="./music/forest-background2-compressed.mp3"
+    myBackgroundAudio.play()
+}
 
 
 function move(e) {
@@ -40,13 +44,14 @@ function move(e) {
             if (isBone == false) {
                 makeBoneAppear()
             }
-            myBackgroundAudio.src = "/music/forest-background.mp3";
-            myBackgroundAudio.play();
+    
         }
     } else if (e.keyCode === 39) { 
-        moveRight()
+        moveRight();
+        document.getElementById("corgi").style.backgroundImage = "url('./images/running-corgi.png')";
     } else if (e.keyCode === 37) {
         moveLeft();
+        document.getElementById("corgi").style.backgroundImage = "url('./images/left-corgi.png')";
     }
 }
 
@@ -93,17 +98,19 @@ function makeObstacles() {
             message.innerHTML = "You are slower than a turtle.<br> Game Over! 🐢 "
             document.getElementById("start-over").style.display = "block";
             myBackgroundAudio.pause();
-            dogWhineAudio.src = "/music/whine.mp3"
-            dogWhineAudio.play()
             gameOver = true;
             if (canvas.firstChild) {
                 canvas.removeChild(canvas.lastChild);
             }
-            document.getElementById("corgi").style.display = "none";
+            corgi.remove();
+            obstacle.remove();
+            document.getElementById("obstacle").style.display = "none";
+           /* document.getElementById("corgi").style.display = "none";
             document.getElementById("obstacle").style.display = "none";
             document.getElementById("title").style.display = "none";
             document.getElementById("instructions1").style.display = "none";
             document.getElementById("instructions2").style.display = "none";
+            */
         }
         obstacleX -= 2;
         obstacle.style.left = obstacleX + 'px';
@@ -115,7 +122,6 @@ function makeObstacles() {
 
 startOverButton.onclick = () => {
     location.reload();
-    dogWhineAudio.pause();
 };
 
 // create a div that is for the bone
@@ -133,10 +139,10 @@ function makeBoneAppear() {
         isBone = true;
 
     let timerId = setInterval(function () {
-        if (position < 60 && Math.round(left / 10) * 10 == Math.round(boneLocation / 10) * 10) {
+        if (position < 60 && Math.round(left / 40) * 40 == Math.round(boneLocation / 40) * 40) {
             clearInterval(timerId);
             increment.innerHTML = ++score;
-            dogBarkAudio.src="/music/single-bark.mp3";
+            dogBarkAudio.src="./music/single-bark.mp3";
             dogBarkAudio.play();
             isBone = false;
             if (canvas.firstChild) {
@@ -166,6 +172,7 @@ function moveLeft() {
         left -= 3;
         corgi.style.left = left + 'px';
         if (left < 0) {
+            document.getElementById("corgi").style.backgroundImage = "url('./images/running-corgi.png')"
             moveRight();
             left = 0;
         }
@@ -182,11 +189,13 @@ function moveRight() {
         left += 3;
         corgi.style.left = left + 'px';
         if (left > width) {
+            document.getElementById("corgi").style.backgroundImage = "url('./images/left-corgi.png')"
             moveLeft();
             left = width;
         }
     }, 20)
 }
+
 
 
 
