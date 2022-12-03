@@ -8,30 +8,29 @@ let score = 0;
 const increment = document.getElementById("increment-counter");
 increment.innerHTML = score;
 const startOverButton = document.getElementById("start-over");
-let bottom = 0;
 let goRight = false;
 let right = 0;
 let goLeft = false;
 let left = 0;
 let rightTimerId
 let leftTimerId
-let obstacleX = 0;
+let obstaclePosition = 0;
 let width = window.innerWidth;
 document.addEventListener('keyup', move); // event listener that listens for up
 let position = 0;
 const canvas = document.getElementById('canvas');
 let randomNum = 0;
 let isBone = false;
-let boneX = 0;
+
+
 const myBackgroundAudio = document.createElement("audio");
 const dogBarkAudio = document.createElement("audio");
 const body = document.getElementsByTagName("BODY")[0];
 
-body.onload = function() {
-    myBackgroundAudio.src="./music/forest-background2-compressed.mp3"
+body.onload = function () {
+    myBackgroundAudio.src = "./music/forest-background2-compressed.mp3"
     myBackgroundAudio.play()
 }
-
 
 function move(e) {
     document.getElementById("instructions1").style.display = "none";
@@ -44,9 +43,9 @@ function move(e) {
             if (isBone == false) {
                 makeBoneAppear()
             }
-    
+
         }
-    } else if (e.keyCode === 39) { 
+    } else if (e.keyCode === 39) {
         moveRight();
         document.getElementById("corgi").style.backgroundImage = "url('./images/running-corgi.png')";
     } else if (e.keyCode === 37) {
@@ -58,14 +57,14 @@ function move(e) {
 function jump() {
     let count = 0;
     if (makeAJump) return;
-    const timerId = setInterval(function () {
+    let timerId = setInterval(function () {
         // move down 
         if (count === 15) { // sets the max height to jump
             clearInterval(timerId)
             let downTimerId = setInterval(function () {
                 if (count === 0) {
                     clearInterval(downTimerId); // stop the up function
-                    makeAJump = false;  // makes it so corgi can jump again 
+                    makeAJump = false;  // makes corgi can jump again 
                 }
                 position -= 5;
                 count--
@@ -82,43 +81,38 @@ function jump() {
     }, 20);
 }
 
-
 function makeObstacles() {
-    let randomNum = Math.random() * 100000
-    console.log(randomNum)
-    let obstacleX = width + 500;
+    let max = 100000;
+    let min = 5000;
+    let randomNum = (Math.floor(Math.random() * (max - min + 1)) + min)
+    let obstaclePosition = 1500;
     const obstacle = document.createElement('div');
     if (gameOver == false) obstacle.setAttribute('id', 'obstacle');
     canvas.appendChild(obstacle); // go into  canvas 
-    obstacle.style.left = obstacleX + 'px';
+    obstacle.style.left = obstaclePosition + 'px';
 
     let timerId = setInterval(function () {
-        if (position < 60 && Math.round(left / 10) * 10 == Math.round(obstacleX / 10) * 10) {
+        if (position < 60 && Math.round(left / 10) * 10 == Math.round(obstaclePosition / 10) * 10) {
             clearInterval(timerId);
             message.innerHTML = "You are slower than a turtle.<br> Game Over! 🐢 "
             document.getElementById("start-over").style.display = "block";
             myBackgroundAudio.pause();
+            dogBarkAudio.pause();
             gameOver = true;
             if (canvas.firstChild) {
                 canvas.removeChild(canvas.lastChild);
             }
             corgi.remove();
             obstacle.remove();
-            document.getElementById("obstacle").style.display = "none";
-           /* document.getElementById("corgi").style.display = "none";
-            document.getElementById("obstacle").style.display = "none";
-            document.getElementById("title").style.display = "none";
-            document.getElementById("instructions1").style.display = "none";
-            document.getElementById("instructions2").style.display = "none";
-            */
         }
-        obstacleX -= 2;
-        obstacle.style.left = obstacleX + 'px';
-    }, 20)
+        obstaclePosition -= 2;
+        obstacle.style.left = obstaclePosition + 'px';
+    }, 25)
 
     if (gameOver == false)
         setTimeout(makeObstacles, randomNum);
 }
+
 
 startOverButton.onclick = () => {
     location.reload();
@@ -128,21 +122,20 @@ startOverButton.onclick = () => {
 
 function makeBoneAppear() {
     let randomNum = Math.random() * 100000
-    let obstacleX = width + 500;
     let max = 800;
-    let min = 200;
+    let min = 100;
     let boneLocation = (Math.floor(Math.random() * (max - min + 1)) + min)
     const treat = document.createElement('div');
     if (gameOver == false) treat.setAttribute('id', 'treat');
-        canvas.appendChild(treat); // go into  canvas 
-        treat.style.left = boneLocation + 'px';
-        isBone = true;
+    canvas.appendChild(treat); // go into  canvas 
+    treat.style.left = boneLocation + 'px';
+    isBone = true;
 
     let timerId = setInterval(function () {
         if (position < 60 && Math.round(left / 40) * 40 == Math.round(boneLocation / 40) * 40) {
             clearInterval(timerId);
             increment.innerHTML = ++score;
-            dogBarkAudio.src="./music/single-bark.mp3";
+            dogBarkAudio.src = "./music/single-bark.mp3";
             dogBarkAudio.play();
             isBone = false;
             if (canvas.firstChild) {
@@ -150,17 +143,12 @@ function makeBoneAppear() {
             }
             document.getElementById("treat").style.display = "none";
         }
-        obstacleX -= 2;
-        obstacle.style.left = obstacleX + 'px';
     }, 20)
 
     if (isBone == false)
-    setTimeout(makeBoneAppear, randomNum);
+        setTimeout(makeBoneAppear, randomNum);
     dogBarkAudio.pause();
 }
-
-
-
 
 function moveLeft() {
     if (goRight) {
@@ -195,16 +183,3 @@ function moveRight() {
         }
     }, 20)
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

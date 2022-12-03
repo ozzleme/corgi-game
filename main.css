@@ -3,11 +3,10 @@
   height: 80px;
   background-image: url("./images/running-corgi.png");
   background-repeat: no-repeat;
-  position: absolute; 
+  position: absolute;
   bottom: 0px;
   left: 0px;
   right: 0px;
-
 }
 
 #obstacle {
@@ -33,7 +32,7 @@ html {
   background-size: cover;
   height: 100%;
   overflow: hidden;
-  font-family: 'Red Hat Display', sans-serif;
+  font-family: "Red Hat Display", sans-serif;
   text-align: center;
 }
 
@@ -45,21 +44,23 @@ html {
   padding: 20px;
   border-radius: 12px;
   font-size: 20px;
-  font-family: 'Red Hat Display', sans-serif;
+  font-family: "Red Hat Display", sans-serif;
   border-style: solid;
   border-color: #0a450e;
   color: #23a62c;
-  background-color:#0a450e;
+  background-color: #0a450e;
 }
 
-#start-over:hover, #start-over:focus{
-  color:#0a450e;
+#start-over:hover,
+#start-over:focus {
+  color: #0a450e;
   cursor: pointer;
   border-style: solid;
   border-color: #2ed939;
   background-color: #2ed939;
-  }
+}
 
-#score, #increment-counter {
+#score,
+#increment-counter {
   font-size: 30px;
 }
